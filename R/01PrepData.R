@@ -1,0 +1,74 @@
+library(tidyverse)
+
+file_list <- list.dirs("./imagedata")
+file_list <- file_list[str_ends(file_list, "ndpi")]
+
+read_folder <- function(path, threshold = 2.5) {
+  morph_data <- read_csv(paste0(path, "/morphology.csv"))
+  spat_data <- read_csv(paste0(path, "/spatial.csv"))
+  morph_data |> 
+    left_join(spat_data, by = "Meta_Global_Mask_Label") |> 
+    rename_with(~ str_replace_all(., "-", "")) |> 
+    filter(
+      QC_Global_Mask_SegVal != 0,
+      Spatial_Nuclei_Spatial_LocalCounts200 > 5,
+      AreaShape_Nuclei_Mask_Area > 20
+    ) |> 
+    mutate(
+      ImagePath = path,
+      Training = !str_starts(path, "./imagedata/1024455"),
+      Cancerous = Intensity_Cytoplasm_Secondary_MedianIntensity / Spatial_Object_Spatial_LocalMeansIntensityCytoplasmSecondaryMedianIntensity200 > threshold
+    ) |> 
+    select(
+      Cancerous, 
+      Training,
+      starts_with("AreaShape_Nuclei"),
+      starts_with("Spatial_Nuclei_Spatial_LocalCounts"),
+      starts_with("Spatial_Object_Spatial_LocalMeansAreaShapeNucleiMaskArea"),
+      starts_with("Spatial_Object_Spatial_LocalMeansAreaShapeNucleiMaskEccentricity"),
+      starts_with("Spatial_Object_Spatial_LocalMeansAreaShapeNucleiMaskAxisMinorLength"),
+      starts_with("Spatial_Object_Spatial_LocalMeansAreaShapeNucleiMaskEccentricity")
+    ) |> 
+    select(
+      -AreaShape_Nuclei_Mask_AreaFilled,
+      -AreaShape_Nuclei_Mask_EulerNumber,
+      -starts_with("AreaShape_Nuclei_Mask_InertiaTensor"),
+      -starts_with("AreaShape_Nuclei_Mask_InertiaTensorEigvals")
+    )
+}
+
+full_data <- map(file_list, read_folder) |>
+  bind_rows()
+
+full_data_train <- full_data |> 
+  filter(Training) |> 
+  select(-Training)
+
+full_data_test <- full_data |> 
+  filter(!Training) |> 
+  select(-Training)
+
+full_data |> 
+  write_csv("./data/full_data.csv")
+
+full_data_train |> 
+  write_csv("./data/full_data_train.csv")
+
+full_data_test |> 
+  write_csv("./data/full_data_test.csv")
+
+full_data_train |> 
+  select(-starts_with("Spatial")) |> 
+  write_csv("./data/area_data_train.csv")
+
+full_data_test |> 
+  select(-starts_with("Spatial")) |> 
+  write_csv("./data/area_data_test.csv")
+
+full_data_train |> 
+  select(-starts_with("Area")) |> 
+  write_csv("./data/spatial_data_train.csv")
+
+full_data_test |> 
+  select(-starts_with("Area")) |> 
+  write_csv("./data/spatial_data_test.csv")
