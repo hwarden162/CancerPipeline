@@ -83,7 +83,7 @@ get_xgbs <- function(data_folds, data_train, data_recipe, ctrl_grid) {
 }
 
 train_model <- function(data_train, data_recipe) {
-  data_folds <- vfold_cv(data_train, v=5, repeats = 1, strata = GOF)
+  data_folds <- vfold_cv(data_train, v=5, repeats = 1, strata = Cancerous)
   
   ctrl_grid <- control_stack_grid()
   

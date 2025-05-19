@@ -16,7 +16,7 @@ make_confusion_mat <- function(data_test, data_model) {
     pull(.pred_class) |> 
     factor()
   
-  confusionMatrix(model_preds, data_test |> pull(GOF) |> factor())
+  confusionMatrix(model_preds, data_test |> pull(Cancerous) |> factor())
 }
 
 make_confusion_mat(full_data_test, full_data_model)
