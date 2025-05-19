@@ -2,7 +2,12 @@
 .Rhistory
 .RData
 .Ruserdata
+.DS_Store
 
-data/
-imagedata/
+env/
+
 models/
+imagedata/
+data/
+
+submission_logs/
