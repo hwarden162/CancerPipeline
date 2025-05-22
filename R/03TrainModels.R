@@ -3,9 +3,12 @@ library(tidyverse)
 
 source("./R/90TrainModel.R")
 
-full_data_train <- read_csv("./data/full_data_train.csv")
-area_data_train <- read_csv("./data/area_data_train.csv")
-spatial_data_train <- read_csv("./data/spatial_data_train.csv")
+full_data_train <- read_csv("./data/full_data_train_balanced.csv") |> 
+  mutate(Cancerous = Cancerous |> factor())
+area_data_train <- read_csv("./data/area_data_train_balanced.csv") |> 
+  mutate(Cancerous = Cancerous |> factor())
+spatial_data_train <- read_csv("./data/spatial_data_train_balanced.csv") |> 
+  mutate(Cancerous = Cancerous |> factor())
 
 full_data_recipe <- readRDS("./models/full_data_recipe.rds")
 area_data_recipe <- readRDS("./models/area_data_recipe.rds")

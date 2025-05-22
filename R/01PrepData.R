@@ -1,3 +1,5 @@
+library(themis)
+library(tidymodels)
 library(tidyverse)
 
 file_list <- list.dirs("./imagedata")
@@ -17,7 +19,8 @@ read_folder <- function(path, threshold = 2.5) {
     mutate(
       ImagePath = path,
       Training = !str_starts(path, "./imagedata/1024455"),
-      Cancerous = Intensity_Cytoplasm_Secondary_MedianIntensity / Spatial_Object_Spatial_LocalMeansIntensityCytoplasmSecondaryMedianIntensity200 > threshold
+      Cancerous = Intensity_Cytoplasm_Secondary_MedianIntensity / Spatial_Object_Spatial_LocalMeansIntensityCytoplasmSecondaryMedianIntensity200 > threshold,
+      Cancerous = Cancerous |> factor()
     ) |> 
     select(
       Cancerous, 
@@ -48,27 +51,59 @@ full_data_test <- full_data |>
   filter(!Training) |> 
   select(-Training)
 
+full_data_train_balanced <- recipe(Cancerous ~ ., data = full_data_train) |> 
+  step_downsample(Cancerous) |> 
+  prep() |> 
+  juice()
+
+full_data_test_balanced <- recipe(Cancerous ~ ., data = full_data_test) |> 
+  step_downsample(Cancerous) |> 
+  prep() |> 
+  juice()
+
 full_data |> 
   write_csv("./data/full_data.csv")
 
 full_data_train |> 
   write_csv("./data/full_data_train.csv")
 
+full_data_train_balanced |> 
+  write_csv("./data/full_data_train_balanced.csv")
+
 full_data_test |> 
   write_csv("./data/full_data_test.csv")
+
+full_data_test_balanced |> 
+  write_csv("./data/full_data_test_balanced.csv")
 
 full_data_train |> 
   select(-starts_with("Spatial")) |> 
   write_csv("./data/area_data_train.csv")
 
+full_data_train_balanced |> 
+  select(-starts_with("Spatial")) |> 
+  write_csv("./data/area_data_train_balanced.csv")
+
 full_data_test |> 
   select(-starts_with("Spatial")) |> 
   write_csv("./data/area_data_test.csv")
+
+full_data_test_balanced |> 
+  select(-starts_with("Spatial")) |> 
+  write_csv("./data/area_data_test_balanced.csv")
 
 full_data_train |> 
   select(-starts_with("Area")) |> 
   write_csv("./data/spatial_data_train.csv")
 
+full_data_train_balanced |> 
+  select(-starts_with("Area")) |> 
+  write_csv("./data/spatial_data_train_balanced.csv")
+
 full_data_test |> 
   select(-starts_with("Area")) |> 
   write_csv("./data/spatial_data_test.csv")
+
+full_data_test_balanced |> 
+  select(-starts_with("Area")) |> 
+  write_csv("./data/spatial_data_test_balanced.csv")
