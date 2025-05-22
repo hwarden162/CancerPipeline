@@ -1,5 +1,7 @@
-library(tidymodels)
-library(tidyverse)
+suppressMessages({
+  library(tidymodels)
+  library(tidyverse)
+})
 
 full_data_train <- read_csv("./data/full_data_train_balanced.csv")
 area_data_train <- read_csv("./data/area_data_train_balanced.csv")

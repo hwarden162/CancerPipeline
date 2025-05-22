@@ -1,6 +1,8 @@
-library(tidymodels)
-library(tidyverse)
-library(stacks)
+suppressMessages({
+  library(tidymodels)
+  library(tidyverse)
+  library(stacks)
+})
 
 GRID_LEVELS <- 3
 

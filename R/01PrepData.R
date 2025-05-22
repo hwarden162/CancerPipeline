@@ -1,6 +1,8 @@
-library(themis)
-library(tidymodels)
-library(tidyverse)
+suppressMessages({
+  library(themis)
+  library(tidymodels)
+  library(tidyverse)
+})
 
 file_list <- list.dirs("./imagedata")
 file_list <- file_list[str_ends(file_list, "ndpi")]

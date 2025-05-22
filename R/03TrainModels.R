@@ -1,5 +1,7 @@
-library(tidymodels)
-library(tidyverse)
+suppressMessages({
+  library(tidymodels)
+  library(tidyverse)
+})
 
 source("./R/90TrainModel.R")
 

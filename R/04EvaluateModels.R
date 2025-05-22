@@ -1,7 +1,9 @@
-library(caret)
-library(tidymodels)
-library(tidyverse)
-library(stacks)
+suppressMessages({
+  library(caret)
+  library(tidymodels)
+  library(tidyverse)
+  library(stacks)
+})
 
 full_data_test <- read_csv("./data/full_data_test_balanced.csv")
 area_data_test <- read_csv("./data/area_data_test_balanced.csv")
