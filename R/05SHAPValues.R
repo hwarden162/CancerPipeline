@@ -31,7 +31,7 @@ get_shap_vals <- function(data_recipe, data_train, data_test, data_model) {
   
   predict_fn <- function(object, newdata) {
     preds <- predict(object, new_data = newdata, type = "prob")
-    dplyr::pull(preds, ".pred_Kras")
+    dplyr::pull(preds, ".pred_TRUE")
   }
   
   vals <- fastshap::explain(
