@@ -2,7 +2,7 @@ library(tidymodels)
 library(tidyverse)
 library(stacks)
 
-GRID_LEVELS <- 25
+GRID_LEVELS <- 3
 
 get_elastic_nets <- function(data_folds, data_recipe, ctrl_grid) {
   
@@ -89,12 +89,12 @@ train_model <- function(data_train, data_recipe) {
   
   elastic_res <- get_elastic_nets(data_folds, data_recipe, ctrl_grid)
   knn_res <- get_knns(data_folds, data_recipe, ctrl_grid)
-  xgb_res <- get_xgbs(data_folds, data_train, data_recipe, ctrl_grid)
+  #xgb_res <- get_xgbs(data_folds, data_train, data_recipe, ctrl_grid)
   
   model_stack <- stacks() |> 
     add_candidates(elastic_res) |> 
     add_candidates(knn_res) |> 
-    add_candidates(xgb_res) |> 
+    #add_candidates(xgb_res) |> 
     blend_predictions() |> 
     fit_members()
   
