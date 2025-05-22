@@ -11,6 +11,7 @@ read_folder <- function(path, threshold = 2.5) {
   morph_data |> 
     left_join(spat_data, by = "Meta_Global_Mask_Label") |> 
     rename_with(~ str_replace_all(., "-", "")) |> 
+    drop_na() |> 
     filter(
       QC_Global_Mask_SegVal != 0,
       Spatial_Nuclei_Spatial_LocalCounts200 > 5,
