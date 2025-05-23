@@ -1,5 +1,6 @@
 suppressMessages({
   library(caret)
+  library(logger)
   library(tidymodels)
   library(tidyverse)
   library(stacks)
