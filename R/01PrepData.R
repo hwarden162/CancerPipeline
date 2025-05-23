@@ -25,8 +25,9 @@ read_folder <- function(path, threshold = 2.5) {
     mutate(
       ImagePath = path,
       Training = !str_starts(path, "./imagedata/1024455"),
-      Cancerous = Intensity_Cytoplasm_Secondary_MedianIntensity / Spatial_Object_Spatial_LocalMeansIntensityCytoplasmSecondaryMedianIntensity200 > threshold,
-      Cancerous = Cancerous |> factor()
+      Cancerous1 = Intensity_Cytoplasm_Secondary_MedianIntensity / Spatial_Object_Spatial_LocalMeansIntensityCytoplasmSecondaryMedianIntensity200 > threshold,
+      Cancerous2 = AreaShape_Nuclei_Mask_AxisMinorLength > 6.25,
+      Cancerous = (Cancerous1 & Cancerous2) |> factor()
     ) |> 
     select(
       Cancerous, 
