@@ -1,11 +1,14 @@
 suppressMessages({
   library(doParallel)
   library(fastshap)
+  library(logger)
   library(shapviz)
   library(tidymodels)
   library(tidyverse)
   library(stacks)
 })
+
+log_info("STARTED: 05SHAPValues.R")
 
 registerDoParallel()
 
@@ -13,13 +16,13 @@ full_data_recipe <- readRDS("./models/full_data_recipe.rds")
 area_data_recipe <- readRDS("./models/area_data_recipe.rds")
 spatial_data_recipe <- readRDS("./models/spatial_data_recipe.rds")
 
-full_data_train <- read_csv("./data/full_data_train_balanced.csv")
-area_data_train <- read_csv("./data/area_data_train_balanced.csv")
-spatial_data_train <- read_csv("./data/spatial_data_train_balanced.csv")
+full_data_train <- suppressMessages(read_csv("./data/full_data_train_balanced.csv"))
+area_data_train <- suppressMessages(read_csv("./data/area_data_train_balanced.csv"))
+spatial_data_train <- suppressMessages(read_csv("./data/spatial_data_train_balanced.csv"))
 
-full_data_test <- read_csv("./data/full_data_test_balanced.csv")
-area_data_test <- read_csv("./data/area_data_test_balanced.csv")
-spatial_data_test <- read_csv("./data/spatial_data_test_balanced.csv")
+full_data_test <- suppressMessages(read_csv("./data/full_data_test_balanced.csv"))
+area_data_test <- suppressMessages(read_csv("./data/area_data_test_balanced.csv"))
+spatial_data_test <- suppressMessages(read_csv("./data/spatial_data_test_balanced.csv"))
 
 full_data_model <- readRDS("./models/full_data_model.rds")
 area_data_model <- readRDS("./models/area_data_model.rds")
@@ -46,7 +49,7 @@ get_shap_vals <- function(data_recipe, data_train, data_test, data_model) {
     object = data_model,
     feature_names = X_test |> colnames(),
     X = X_train,
-    nsim = 1000,
+    nsim = 200,
     pred_wrapper = predict_fn,
     newdata = X_test,
     baseline = baseline,
@@ -57,8 +60,11 @@ get_shap_vals <- function(data_recipe, data_train, data_test, data_model) {
 }
 
 full_data_vals <- get_shap_vals(full_data_recipe, full_data_train, full_data_test, full_data_model)
+log_info("Full Data SHAP Values: CALCULATED")
 area_data_vals <- get_shap_vals(area_data_recipe, area_data_train, area_data_test, area_data_model)
+log_info("Morphological Data SHAP Values: CALCULATED")
 spatial_data_vals <- get_shap_vals(spatial_data_recipe, spatial_data_train, spatial_data_test, spatial_data_model)
+log_info("Spatial Data SHAP Values: CALCULATED")
 
 full_data_vals |> 
   saveRDS("./data/full_shap_vals.rds")
@@ -68,3 +74,5 @@ area_data_vals |>
 
 spatial_data_vals |> 
   saveRDS("./data/spatial_shap_vals.rds")
+
+log_info("COMPLETED: 05SHAPValues.R")

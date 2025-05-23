@@ -1,11 +1,14 @@
 suppressMessages({
+  library(logger)
   library(tidymodels)
   library(tidyverse)
 })
 
-full_data_train <- read_csv("./data/full_data_train_balanced.csv")
-area_data_train <- read_csv("./data/area_data_train_balanced.csv")
-spatial_data_train <- read_csv("./data/spatial_data_train_balanced.csv")
+log_info("STARTED: 02TrainPreprocessors.R")
+
+full_data_train <- suppressMessages(read_csv("./data/full_data_train_balanced.csv"))
+area_data_train <- suppressMessages(read_csv("./data/area_data_train_balanced.csv"))
+spatial_data_train <- suppressMessages(read_csv("./data/spatial_data_train_balanced.csv"))
 
 full_data_recipe <- recipe(Cancerous ~ ., data = full_data_train) |> 
   step_zv(all_numeric_predictors()) |> 
@@ -33,3 +36,5 @@ area_data_recipe |>
 
 spatial_data_recipe |> 
   saveRDS("./models/spatial_data_recipe.rds")
+
+log_info("COMPLETED: 02TrainPreprocessors.R")

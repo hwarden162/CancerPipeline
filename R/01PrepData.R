@@ -1,15 +1,17 @@
 suppressMessages({
+  library(logger)
   library(themis)
   library(tidymodels)
   library(tidyverse)
 })
 
+log_info("STARTED: 01PrepData.R")
 file_list <- list.dirs("./imagedata")
 file_list <- file_list[str_ends(file_list, "ndpi")]
 
 read_folder <- function(path, threshold = 2.5) {
-  morph_data <- read_csv(paste0(path, "/morphology.csv"))
-  spat_data <- read_csv(paste0(path, "/spatial.csv"))
+  morph_data <- suppressMessages(read_csv(paste0(path, "/morphology.csv")))
+  spat_data <- suppressMessages(read_csv(paste0(path, "/spatial.csv")))
   morph_data |> 
     left_join(spat_data, by = "Meta_Global_Mask_Label") |> 
     rename_with(~ str_replace_all(., "-", "")) |> 
@@ -17,7 +19,8 @@ read_folder <- function(path, threshold = 2.5) {
     filter(
       QC_Global_Mask_SegVal != 0,
       Spatial_Nuclei_Spatial_LocalCounts200 > 5,
-      AreaShape_Nuclei_Mask_Area > 20
+      AreaShape_Nuclei_Mask_Area > 20,
+      AreaShape_Nuclei_Mask_Area < 400
     ) |> 
     mutate(
       ImagePath = path,
@@ -110,3 +113,5 @@ full_data_test |>
 full_data_test_balanced |> 
   select(-starts_with("Area")) |> 
   write_csv("./data/spatial_data_test_balanced.csv")
+
+log_info("COMPLETED: 01PrepData.R")

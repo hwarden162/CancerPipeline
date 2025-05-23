@@ -4,7 +4,7 @@ suppressMessages({
   library(stacks)
 })
 
-GRID_LEVELS <- 3
+GRID_LEVELS <- 8
 
 get_elastic_nets <- function(data_folds, data_recipe, ctrl_grid) {
   
@@ -52,7 +52,7 @@ get_knns <- function(data_folds, data_recipe, ctrl_grid) {
 
 get_xgbs <- function(data_folds, data_train, data_recipe, ctrl_grid) {
   xgb_model <- boost_tree(
-    tree_depth = tune(),      # This is your max depth
+    tree_depth = tune(),
     learn_rate = tune(),
     loss_reduction = tune(),
     sample_size = tune(),
@@ -91,12 +91,12 @@ train_model <- function(data_train, data_recipe) {
   
   elastic_res <- get_elastic_nets(data_folds, data_recipe, ctrl_grid)
   knn_res <- get_knns(data_folds, data_recipe, ctrl_grid)
-  #xgb_res <- get_xgbs(data_folds, data_train, data_recipe, ctrl_grid)
+  xgb_res <- get_xgbs(data_folds, data_train, data_recipe, ctrl_grid)
   
   model_stack <- stacks() |> 
     add_candidates(elastic_res) |> 
     add_candidates(knn_res) |> 
-    #add_candidates(xgb_res) |> 
+    add_candidates(xgb_res) |> 
     blend_predictions() |> 
     fit_members()
   
