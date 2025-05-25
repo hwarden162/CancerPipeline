@@ -16,7 +16,10 @@ full_data_recipe <- readRDS("./models/full_data_recipe.rds")
 area_data_recipe <- readRDS("./models/area_data_recipe.rds")
 spatial_data_recipe <- readRDS("./models/spatial_data_recipe.rds")
 
-full_data_train <- read_csv("./data/full_data_train_balanced.csv")
+full_data_train <- read_csv("./data/full_data_train_balanced.csv") |> 
+  group_by(Cancerous) |> 
+  slice_sample(n = 5) |> 
+  ungroup()
 area_data_train <- read_csv("./data/area_data_train_balanced.csv")
 spatial_data_train <- read_csv("./data/spatial_data_train_balanced.csv")
 
