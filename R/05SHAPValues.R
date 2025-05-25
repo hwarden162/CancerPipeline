@@ -6,6 +6,8 @@ library(tidymodels)
 library(tidyverse)
 library(stacks)
 
+NDATASAMPLES <- 500
+
 log_info("STARTED: 05SHAPValues.R")
 
 registerDoParallel()
@@ -18,7 +20,10 @@ full_data_train <- read_csv("./data/full_data_train_balanced.csv")
 area_data_train <- read_csv("./data/area_data_train_balanced.csv")
 spatial_data_train <- read_csv("./data/spatial_data_train_balanced.csv")
 
-full_data_test <- read_csv("./data/full_data_test_balanced.csv")
+full_data_test <- read_csv("./data/full_data_test_balanced.csv") |> 
+  group_by(Cancerous) |> 
+  slice_sample(n = NDATASAMPLES) |> 
+  ungroup()
 area_data_test <- read_csv("./data/area_data_test_balanced.csv")
 spatial_data_test <- read_csv("./data/spatial_data_test_balanced.csv")
 
