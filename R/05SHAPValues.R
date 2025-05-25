@@ -47,7 +47,7 @@ get_shap_vals <- function(data_recipe, data_train, data_test, data_model) {
     object = data_model,
     feature_names = X_test |> colnames(),
     X = X_train,
-    nsim = 100,
+    nsim = 2,
     pred_wrapper = predict_fn,
     newdata = X_test,
     baseline = baseline,
