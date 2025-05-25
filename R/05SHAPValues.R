@@ -1,22 +1,24 @@
-library(doParallel)
-library(fastshap)
-library(logger)
-library(shapviz)
-library(tidymodels)
-library(tidyverse)
-library(stacks)
+suppressMessages({
+  library(doParallel)
+  library(fastshap)
+  library(logger)
+  library(shapviz)
+  library(tidymodels)
+  library(tidyverse)
+  library(stacks)
+})
 
 log_info("STARTED: 05SHAPValues.R")
 
 registerDoParallel()
 
-full_data_train <- read_csv("./data/full_data_train_balanced.csv")
-area_data_train <- read_csv("./data/area_data_train_balanced.csv")
-spatial_data_train <- read_csv("./data/spatial_data_train_balanced.csv")
+full_data_train <- suppressMessages(read_csv("./data/full_data_train_balanced.csv"))
+area_data_train <- suppressMessages(read_csv("./data/area_data_train_balanced.csv"))
+spatial_data_train <- suppressMessages(read_csv("./data/spatial_data_train_balanced.csv"))
 
-full_data_test <- read_csv("./data/full_data_test_balanced.csv")
-area_data_test <- read_csv("./data/area_data_test_balanced.csv")
-spatial_data_test <- read_csv("./data/spatial_data_test_balanced.csv")
+full_data_test <- suppressMessages(read_csv("./data/full_data_test_balanced.csv"))
+area_data_test <- suppressMessages(read_csv("./data/area_data_test_balanced.csv"))
+spatial_data_test <- suppressMessages(read_csv("./data/spatial_data_test_balanced.csv"))
 
 full_data_model <- readRDS("./models/full_data_model.rds")
 area_data_model <- readRDS("./models/area_data_model.rds")
@@ -39,12 +41,12 @@ get_shap_vals <- function(data_train, data_test, data_model) {
   
   baseline <- mean(predict_fn(data_model, newdata = data_train))
   
-  log_info("Starting shap explainer")
+  log_info("Starting shap explainer run")
   vals <- fastshap::explain(
     object = data_model,
     feature_names = X_test |> colnames(),
     X = X_train,
-    nsim = 2,
+    nsim = 200,
     pred_wrapper = predict_fn,
     newdata = X_test,
     baseline = baseline
