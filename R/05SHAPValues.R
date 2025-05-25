@@ -6,7 +6,7 @@ library(tidymodels)
 library(tidyverse)
 library(stacks)
 
-NDATASAMPLES <- 500
+NDATASAMPLES <- 50
 
 log_info("STARTED: 05SHAPValues.R")
 
