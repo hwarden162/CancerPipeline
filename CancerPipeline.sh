@@ -18,4 +18,3 @@ Rscript ./R/02TrainPreprocessors.R
 Rscript ./R/03TrainModels.R
 Rscript ./R/04EvaluateModels.R
 Rscript ./R/05SHAPValues.R
-echo "Analysis Complete"
