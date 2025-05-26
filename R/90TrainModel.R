@@ -4,7 +4,7 @@ suppressMessages({
   library(stacks)
 })
 
-GRID_LEVELS <- 8
+GRID_LEVELS <- 12
 
 get_elastic_nets <- function(data_folds, data_recipe, ctrl_grid) {
   
@@ -84,6 +84,95 @@ get_xgbs <- function(data_folds, data_train, data_recipe, ctrl_grid) {
   xgb_res
 }
 
+get_svmlins <- function(data_folds, data_recipe, ctrl_grid) {
+  svmlin_model <- svm_linear(
+    cost = tune()
+  ) |> 
+    set_mode("classification") |> 
+    set_engine("kernlab")
+  
+  svmlin_wf <- workflow() |> 
+    add_recipe(data_recipe) |> 
+    add_model(svmlin_model)
+  
+  svmlin_res <- tune_grid(
+    svmlin_wf,
+    resamples = data_folds,
+    grid = GRID_LEVELS,
+    control = ctrl_grid
+  )
+  
+  svmlin_res
+}
+
+get_svmrbfs <- function(data_folds, data_recipe, ctrl_grid) {
+  svmrbf_model <- svm_rbf(
+    cost = tune(),
+    rbf_sigma = tune()
+  ) |> 
+    set_mode("classification") |> 
+    set_engine("kernlab")
+  
+  svmrbf_wf <- workflow() |> 
+    add_recipe(data_recipe) |> 
+    add_model(svmrbf_model)
+  
+  svmrbf_res <- tune_grid(
+    svmrbf_wf,
+    resamples = data_folds,
+    grid = GRID_LEVELS,
+    control = ctrl_grid
+  )
+  
+  svmrbf_res
+}
+
+get_svmpols <- function(data_folds, data_recipe, ctrl_grid) {
+  svmpol_model <- svm_poly(
+    cost = tune(),
+    degree = tune(),
+    scale_factor = tune()
+  ) |> 
+    set_mode("classification") |> 
+    set_engine("kernlab")
+  
+  svmpol_wf <- workflow() |> 
+    add_recipe(data_recipe) |> 
+    add_model(svmpol_model)
+  
+  svmpol_res <- tune_grid(
+    svmpol_wf,
+    resamples = data_folds,
+    grid = GRID_LEVELS,
+    control = ctrl_grid
+  )
+  
+  svmpol_res
+}
+
+get_mlps <- function(data_folds, data_recipe, ctrl_grid) {
+  mlp_model <- mlp(
+    hidden_units = tune(),
+    penalty = tune(),
+    epochs = tune()
+  ) |> 
+    set_mode("classification") |> 
+    set_engine("nnet")
+  
+  mlp_wf <- workflow() |> 
+    add_recipe(data_recipe) |> 
+    add_model(mlp_model)
+  
+  mlp_res <- tune_grid(
+    mlp_wf,
+    resamples = data_folds,
+    grid = GRID_LEVELS,
+    control = ctrl_grid
+  )
+  
+  mlp_res
+}
+
 train_model <- function(data_train, data_recipe) {
   data_folds <- vfold_cv(data_train, v=5, repeats = 1, strata = Cancerous)
   
@@ -92,11 +181,19 @@ train_model <- function(data_train, data_recipe) {
   elastic_res <- get_elastic_nets(data_folds, data_recipe, ctrl_grid)
   knn_res <- get_knns(data_folds, data_recipe, ctrl_grid)
   xgb_res <- get_xgbs(data_folds, data_train, data_recipe, ctrl_grid)
+  svmlin_res <- get_svmlins(data_folds, data_recipe, ctrl_grid)
+  svmrbf_res <- get_svmrbfs(data_folds, data_recipe, ctrl_grid)
+  svmpol_res <- get_svmpols(data_folds, data_recipe, ctrl_grid)
+  mlp_res <- get_mlps(data_folds, data_recipe, ctrl_grid)
   
   model_stack <- stacks() |> 
     add_candidates(elastic_res) |> 
     add_candidates(knn_res) |> 
     add_candidates(xgb_res) |> 
+    add_candidates(svmlin_res) |> 
+    add_candidates(svmrbf_res) |>
+    add_candidates(svmpol_res) |>
+    add_candidates(mlp_res) |> 
     blend_predictions() |> 
     fit_members()
   
