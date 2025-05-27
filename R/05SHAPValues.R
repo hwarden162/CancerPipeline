@@ -8,6 +8,8 @@ suppressMessages({
   library(stacks)
 })
 
+NUMCLASSSAMPLES <- 100
+
 log_info("STARTED: 05SHAPValues.R")
 
 registerDoParallel()
@@ -16,9 +18,18 @@ full_data_train <- suppressMessages(read_csv("./data/full_data_train_balanced.cs
 area_data_train <- suppressMessages(read_csv("./data/area_data_train_balanced.csv"))
 spatial_data_train <- suppressMessages(read_csv("./data/spatial_data_train_balanced.csv"))
 
-full_data_test <- suppressMessages(read_csv("./data/full_data_test_balanced.csv"))
-area_data_test <- suppressMessages(read_csv("./data/area_data_test_balanced.csv"))
-spatial_data_test <- suppressMessages(read_csv("./data/spatial_data_test_balanced.csv"))
+full_data_test <- suppressMessages(read_csv("./data/full_data_test_balanced.csv")) |> 
+  group_by(Cancerous) |> 
+  slice_sample(n = NUMCLASSSAMPLES) |> 
+  ungroup()
+area_data_test <- suppressMessages(read_csv("./data/area_data_test_balanced.csv")) |> 
+  group_by(Cancerous) |> 
+  slice_sample(n = NUMCLASSSAMPLES) |> 
+  ungroup()
+spatial_data_test <- suppressMessages(read_csv("./data/spatial_data_test_balanced.csv")) |> 
+  group_by(Cancerous) |> 
+  slice_sample(n = NUMCLASSSAMPLES) |> 
+  ungroup()
 
 full_data_model <- readRDS("./models/full_data_model.rds")
 area_data_model <- readRDS("./models/area_data_model.rds")
