@@ -8,7 +8,7 @@ suppressMessages({
   library(stacks)
 })
 
-NUMCLASSSAMPLES <- 100
+NUMCLASSSAMPLES <- 200
 
 log_info("STARTED: 05SHAPValues.R")
 
@@ -57,7 +57,7 @@ get_shap_vals <- function(data_train, data_test, data_model) {
     object = data_model,
     feature_names = X_test |> colnames(),
     X = X_train,
-    nsim = 200,
+    nsim = 100,
     pred_wrapper = predict_fn,
     newdata = X_test,
     baseline = baseline
