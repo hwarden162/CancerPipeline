@@ -190,9 +190,9 @@ train_model <- function(data_train, data_recipe) {
     add_candidates(elastic_res) |> 
     add_candidates(knn_res) |> 
     add_candidates(xgb_res) |> 
-    add_candidates(svmlin_res) |> 
-    add_candidates(svmrbf_res) |>
-    add_candidates(svmpol_res) |>
+    #add_candidates(svmlin_res) |> 
+    #add_candidates(svmrbf_res) |>
+    #add_candidates(svmpol_res) |>
     add_candidates(mlp_res) |> 
     blend_predictions() |> 
     fit_members()
