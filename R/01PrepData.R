@@ -43,7 +43,8 @@ read_folder <- function(path, threshold = 2.5) {
       -AreaShape_Nuclei_Mask_AreaFilled,
       -AreaShape_Nuclei_Mask_EulerNumber,
       -starts_with("AreaShape_Nuclei_Mask_InertiaTensor"),
-      -starts_with("AreaShape_Nuclei_Mask_InertiaTensorEigvals")
+      -starts_with("AreaShape_Nuclei_Mask_InertiaTensorEigvals"),
+      -AreaShape_Nuclei_Mask_AxisMinorLength
     )
 }
 
