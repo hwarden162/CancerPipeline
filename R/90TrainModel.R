@@ -181,9 +181,9 @@ train_model <- function(data_train, data_recipe) {
   elastic_res <- get_elastic_nets(data_folds, data_recipe, ctrl_grid)
   knn_res <- get_knns(data_folds, data_recipe, ctrl_grid)
   xgb_res <- get_xgbs(data_folds, data_train, data_recipe, ctrl_grid)
-  svmlin_res <- get_svmlins(data_folds, data_recipe, ctrl_grid)
-  svmrbf_res <- get_svmrbfs(data_folds, data_recipe, ctrl_grid)
-  svmpol_res <- get_svmpols(data_folds, data_recipe, ctrl_grid)
+  #svmlin_res <- get_svmlins(data_folds, data_recipe, ctrl_grid)
+  #svmrbf_res <- get_svmrbfs(data_folds, data_recipe, ctrl_grid)
+  #svmpol_res <- get_svmpols(data_folds, data_recipe, ctrl_grid)
   mlp_res <- get_mlps(data_folds, data_recipe, ctrl_grid)
   
   model_stack <- stacks() |> 
