@@ -12,7 +12,7 @@ NUMCLASSSAMPLES <- 200
 
 log_info("STARTED: 05SHAPValues.R")
 
-registerDoParallel(cores = 7)
+registerDoParallel()
 
 full_data_train <- suppressMessages(read_csv("./data/full_data_train_balanced.csv"))
 area_data_train <- suppressMessages(read_csv("./data/area_data_train_balanced.csv"))
@@ -60,8 +60,7 @@ get_shap_vals <- function(data_train, data_test, data_model) {
     nsim = 100,
     pred_wrapper = predict_fn,
     newdata = X_test,
-    baseline = baseline,
-    parallel = TRUE
+    baseline = baseline
   )
   
   shapviz(vals, X=X_test, baseline=baseline)
