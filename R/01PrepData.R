@@ -67,7 +67,8 @@ full_data_train_balanced <- recipe(Cancerous ~ ., data = full_data_train) |>
 full_data_test_balanced <- recipe(Cancerous ~ ., data = full_data_test) |> 
   step_downsample(Cancerous) |> 
   prep() |> 
-  juice()
+  juice() |> 
+  initial_split(prop = 0.5, strata = Cancerous)
 
 full_data |> 
   write_csv("./data/full_data.csv")
@@ -78,11 +79,13 @@ full_data_train |>
 full_data_train_balanced |> 
   write_csv("./data/full_data_train_balanced.csv")
 
-full_data_test |> 
-  write_csv("./data/full_data_test.csv")
+full_data_test_balanced |> 
+  training() |> 
+  write_csv("./data/full_data_test_balanced.csv")
 
 full_data_test_balanced |> 
-  write_csv("./data/full_data_test_balanced.csv")
+  testing() |> 
+  write_csv("./data/full_data_calibration_balanced.csv")
 
 full_data_train |> 
   select(-starts_with("Spatial")) |> 
@@ -92,13 +95,15 @@ full_data_train_balanced |>
   select(-starts_with("Spatial")) |> 
   write_csv("./data/area_data_train_balanced.csv")
 
-full_data_test |> 
-  select(-starts_with("Spatial")) |> 
-  write_csv("./data/area_data_test.csv")
-
 full_data_test_balanced |> 
+  training() |> 
   select(-starts_with("Spatial")) |> 
   write_csv("./data/area_data_test_balanced.csv")
+
+full_data_test_balanced |> 
+  testing() |> 
+  select(-starts_with("Spatial")) |> 
+  write_csv("./data/area_data_calibration_balanced.csv")
 
 full_data_train |> 
   select(-starts_with("Area")) |> 
@@ -108,12 +113,14 @@ full_data_train_balanced |>
   select(-starts_with("Area")) |> 
   write_csv("./data/spatial_data_train_balanced.csv")
 
-full_data_test |> 
-  select(-starts_with("Area")) |> 
-  write_csv("./data/spatial_data_test.csv")
-
 full_data_test_balanced |> 
+  training() |> 
   select(-starts_with("Area")) |> 
   write_csv("./data/spatial_data_test_balanced.csv")
+
+full_data_test_balanced |> 
+  testing() |> 
+  select(-starts_with("Area")) |> 
+  write_csv("./data/spatial_data_calibration_balanced.csv")
 
 log_info("COMPLETED: 01PrepData.R")
