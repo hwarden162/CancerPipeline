@@ -7,7 +7,7 @@ suppressMessages({
 
 log_info("STARTED: 03TrainModels.R")
 
-registerDoParallel()
+#registerDoParallel()
 
 source("./R/90TrainModel.R")
 
