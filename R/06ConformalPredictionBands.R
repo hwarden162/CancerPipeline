@@ -52,8 +52,8 @@ get_conformal_classes <- function(conformal_scores, test_preds, agreement, alpha
   target_quantile <- quantile(conformal_scores, q_hat) |> unname()
   test_preds |> 
     mutate(
-      .pred_FALSE = .pred_FALSE > target_quantile,
-      .pred_TRUE = .pred_TRUE > target_quantile,
+      .pred_FALSE = .pred_FALSE > 1-target_quantile,
+      .pred_TRUE = .pred_TRUE > 1-target_quantile,
       agreement = agreement
     )
 }
@@ -79,9 +79,9 @@ spat_conf_preds <- bind_rows(
   )
 )
 
-bind_rows(
+conformal_bands <- bind_rows(
   full_conf_preds |> mutate(from = "Full Data"),
   area_conf_preds |> mutate(from = "Morphology Data"),
   spat_conf_preds |> mutate(from = "Spatial Data")
-) |> 
+)
   write_csv("./data/conformal_bands.csv")
